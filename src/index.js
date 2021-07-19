@@ -1,10 +1,86 @@
 import "./styles.css";
 
-document.getElementById("app").innerHTML = `
-<h1>Hello Vanilla!</h1>
-<div>
-  We use the same configuration as Parcel to bundle this sandbox, you can find more
-  info about Parcel 
-  <a href="https://parceljs.org" target="_blank" rel="noopener noreferrer">here</a>.
-</div>
-`;
+const onClickAdd = () => {
+  //テキストボックスの値を取得し、
+  const inputText = document.getElementById("add-text").value;
+  document.getElementById("add-text").value = "";
+
+  createFromIncompleteList(inputText);
+};
+
+//未完了のリストから指定の要素を削除
+const deleteFromIncompleteList = (target) => {
+  document.getElementById("incomplete-list").removeChild(target);
+};
+
+//未完了リストに追加する関数
+const createFromIncompleteList = (text) => {
+  //div生成
+  const div = document.createElement("div");
+  div.className = "list-low";
+
+  //liタグ生成
+  const li = document.createElement("li");
+  li.innerText = text;
+
+  const completebutton = document.createElement("button");
+  completebutton.innerText = "完了";
+  completebutton.addEventListener("click", () => {
+    //押された完了ボタンの親タグdivを未完了リストから削除
+    deleteFromIncompleteList(completebutton.parentNode);
+
+    //完了リストに追加する要素
+    const addTarget = completebutton.parentNode;
+
+    //TODO内容テキスト取得
+    const text = addTarget.firstElementChild.innerText;
+
+    //div以下を初期化
+    addTarget.textContent = null;
+
+    //liタグを生成
+    const li = document.createElement("li");
+    li.innerText = text;
+
+    //buttonタグを生成
+    const backbutton = document.createElement("button");
+    backbutton.innerText = "戻す";
+    backbutton.addEventListener("click", () => {
+      //押された戻すボタンの親タグdivを完了リストから削除
+      const deletetarget = backbutton.parentNode;
+      document.getElementById("complete-list").removeChild(deletetarget);
+
+      //テキスト取得
+      const text = backbutton.parentNode.firstElementChild.innerText;
+      createFromIncompleteList(text);
+    });
+
+    //divタグの子要素に各要素を設定
+    addTarget.appendChild(li);
+    addTarget.appendChild(backbutton);
+
+    //完了リストに追加
+    document.getElementById("complete-list").appendChild(addTarget);
+  });
+
+  const deletebutton = document.createElement("button");
+  deletebutton.innerText = "削除";
+  deletebutton.addEventListener("click", () => {
+    //押された削除ボタンの親タグdivを未完了リストから削除
+    deleteFromIncompleteList(deletebutton.parentNode);
+  });
+
+  const backbutton = document.createElement("button");
+
+  //divタグの子要素に各要素を設定
+  div.appendChild(li);
+  div.appendChild(completebutton);
+  div.appendChild(deletebutton);
+
+  //未完了リストに追加
+  document.getElementById("incomplete-list").appendChild(div);
+};
+
+document
+  .getElementById("add-button")
+  .addEventListener("click", () => onClickAdd());
